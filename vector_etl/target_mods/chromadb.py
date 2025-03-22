@@ -15,7 +15,9 @@ class ChromaDBTarget(BaseTarget):
 
     def connect(self):
         logger.info("Connecting to ChromaDB...")
-        self.client = chromadb.Client()
+        logger.info(self.config['host'])
+        self.client = chromadb.HttpClient(host=self.config['host'], port=self.config['port'], ssl=False)
+        self.client.heartbeat()
         logger.info("Connected to ChromaDB successfully.")
 
     def create_index_if_not_exists(self, dimension):
@@ -24,8 +26,7 @@ class ChromaDBTarget(BaseTarget):
 
         collection_name = self.config["collection_name"]
         
-        collections = self.client.list_collections()
-        collection_names = [c.name for c in collections]
+        collection_names = self.client.list_collections()
         
         if collection_name not in collection_names:
             logger.info(f"Creating ChromaDB collection: {collection_name}")

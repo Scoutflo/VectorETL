@@ -4,7 +4,7 @@ cohere
 cffi
 openai
 psycopg2-binary
-pinecone-client
+pinecone
 requests
 tiktoken
 python-dotenv
@@ -41,3 +41,4 @@ python-magic
 pytest
 nltk
 pymilvus
+chromadb
