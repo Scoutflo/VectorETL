@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from vector_etl.target_mods.pinecone import PineconeTarget
 from vector_etl.target_mods.qdrant import QdrantTarget
+from vector_etl.target_mods.chromadb import ChromaDBTarget  
 
 @pytest.fixture
 def sample_df():
@@ -27,6 +28,14 @@ def qdrant_config():
         'qdrant_url': 'http://localhost:6333',
         'qdrant_api_key': 'test_api_key',
         'collection_name': 'test_collection'
+    }
+
+@pytest.fixture
+def chromadb_config():
+    return {
+        'chromadb_url': 'http://localhost:6333',
+        'chromadb_api_key': 'test_api_key',
+        'collection_name': 'scoutflo-test'
     }
 
 def test_pinecone_target_connect(pinecone_config):
@@ -74,3 +83,27 @@ def test_qdrant_target_write_data(sample_df, qdrant_config):
         call_args = mock_client.upsert.call_args[1]
         assert call_args['collection_name'] == 'test_collection'
         assert len(call_args['points']) == len(sample_df)
+
+def test_chromadb_target_connect(chromadb_config):
+    with patch('chromadb.HttpClient') as mock_chromadb:
+        target = ChromaDBTarget(chromadb_config)
+        target.connect()
+        
+        mock_chromadb.assert_called_once_with(
+            url='http://localhost:6333',
+            api_key='test_api_key'
+        )
+
+def test_chromadb_target_write_data(sample_df, chromadb_config):
+    with patch('chromadb.HttpClient') as mock_chromadb:
+        mock_client = Mock()
+        mock_collection = Mock()
+        mock_chromadb.return_value = mock_client
+        mock_client.get_or_create_collection.return_value = mock_collection
+        
+        target = ChromaDBTarget(chromadb_config)
+        target.connect()
+        target.write_data(sample_df, 'test_domain')
+        
+        mock_client.get_or_create_collection.assert_called_once_with(name='scoutflo-test')
+        mock_collection.upsert.assert_called_once()
