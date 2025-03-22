@@ -1,0 +1,17 @@
+source:
+  source_data_type: "Github"
+  repo_name: "https://github.com/terraform-aws-modules"
+
+embedding:
+  embedding_model: "OpenAI"
+  api_key: 
+  model_name: "text-embedding-ada-002"
+
+target:
+  target_database: "ChromaDB"
+  index_name: "scoutflo-test-v3"
+  dimension: 1536
+  metric: "cosine"
+
+embed_columns:
+  - "data"
