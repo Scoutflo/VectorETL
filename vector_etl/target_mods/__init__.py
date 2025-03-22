@@ -8,6 +8,7 @@ from .tembo import TemboTarget
 from .mongodb import MongoDBTarget
 from .neo4j import Neo4jTarget
 from .milvus import MilvusTarget
+from .chromadb import ChromaDBTarget
 
 def get_target_database(config):
     target_type = config['target_database']
@@ -31,5 +32,7 @@ def get_target_database(config):
         return Neo4jTarget(config)
     elif target_type == 'Milvus':
         return MilvusTarget(config)
+    elif target_type == 'ChromaDB':
+        return ChromaDBTarget(config)
     else:
         raise ValueError(f"Unsupported target database: {target_type}")

@@ -32,7 +32,7 @@ setup(
         "cffi",
         "openai",
         "psycopg2-binary",
-        "pinecone-client",
+        "pinecone",
         "requests",
         "tiktoken",
         "python-dotenv",
