@@ -43,3 +43,4 @@ nltk
 pymilvus
 chromadb
 PyGithub
+onnxruntime
