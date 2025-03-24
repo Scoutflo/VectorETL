@@ -154,7 +154,7 @@ class FileBaseSource(BaseSource):
             df = pd.read_excel(local_file_path)
         elif file_type == 'json':
             df = pd.read_json(local_file_path)
-        elif file_type in ['txt', 'pdf', 'doc', 'docx']:
+        elif file_type in ['txt', 'pdf', 'doc', 'docx','md']:
             if self.config.get('use_unstructured'):
                 df = self.parse_text_files_unstructured(local_file_path, file_type)
             else:
