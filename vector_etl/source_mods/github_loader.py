@@ -68,5 +68,28 @@ class GithubSource(FileBaseSource):
             for dir in dirs:
                 os.rmdir(os.path.join(root, dir))
         os.rmdir(path)
+        
+    def download_file(self, file_path):
 
+        downloaded_files = []
+
+        local_file_path = os.path.join("tempfile_downloads", file_path.split('/')[-1])
+        
+        if not self.client:
+            self.connect()
+            
+        content = self.repo.get_contents(file_path, ref=self.branch_name)
+        file_data = content.decoded_content
+        
+    
+        os.makedirs(os.path.dirname(local_file_path), exist_ok=True)
+        
+        
+        with open(local_file_path, "wb") as f:
+            f.write(file_data)
+        
+        downloaded_files.append(local_file_path)
+        logger.info(f"Downloaded {file_path} to {local_file_path}")
+
+        return downloaded_files
 
