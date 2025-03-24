@@ -13,15 +13,16 @@ class GithubSource(FileBaseSource):
         super().__init__(config)
         self.client = None
         self.repo_url = config['repo_name']
-        self.pat = config['pat', None]
+        self.pat = config.get('pat', None)  
         self.repo = None
-        self.branch_name = config['branch_name','main']
-        self.file_ext = config['file_ext','.md']
+        self.branch_name = config.get('branch_name', 'main')  
+        self.file_ext = config.get('file_ext', '.md')
         
     
     def connect(self):
         logger.info("Connecting to Github client...")
-        self.client = Github(password=self.pat)
+        print("ashupat",self.pat)
+        self.client = Github()
         self.repo = self.client.get_repo(self.repo_url)
         if self.repo != None: 
             logger.info("Connected to Github client.")
