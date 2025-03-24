@@ -1,6 +1,6 @@
 source:
   source_data_type: "Github"
-  repo_name: "https://github.com/terraform-aws-modules"
+  repo_name: "https://github.com/terraform-aws-modules/terraform-aws-vpc"
 
 embedding:
   embedding_model: "OpenAI"
