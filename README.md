@@ -1,5 +1,5 @@
 <div align="center">
-    <a href="https://contextdata.ai"><img src="docs/assets/icon.png" width="100" height="100" style="object-fit: cover;"></a>
+    <a href="https://scoutflo.com"><img src="docs/assets/icon.png" width="100" height="100" style="object-fit: cover;"></a>
 </div>
 
 <br/>
@@ -8,7 +8,7 @@
   <p>VectorETL: Lightweight ETL Framework for Vector Databases</p>
 </h2>
 
-VectorETL by [Scoutflo](https://www.scoutflo.com/) is a modular framework designed to help **Data & AI engineers process data for their AI applications in just a few minutes!**
+VectorETL by [Scoutflo](https://www.scoutflo.com/) originally forked from [Context Data](https://contextdata.ai) 's [VectorETL](https://github.com/ContextData/VectorETL)  is a modular framework designed to help **Data & AI engineers process data for their AI applications in just a few minutes!**
 
 VectorETL streamlines the process of converting diverse data sources into vector embeddings and storing them in various vector databases. It supports multiple data sources (databases, cloud storage, and local files), various embedding models (including OpenAI, Cohere, and Google Gemini), and several vector database targets (like Pinecone, Qdrant, and Weaviate).
 
