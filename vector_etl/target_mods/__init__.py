@@ -1,4 +1,4 @@
-from .pinecone import PineconeTarget
+# from .pinecone import PineconeTarget
 from .qdrant import QdrantTarget
 from .weaviate import WeaviateTarget
 from .singlestore import SingleStoreTarget
@@ -12,9 +12,9 @@ from .chromadb import ChromaDBTarget
 
 def get_target_database(config):
     target_type = config['target_database']
-    if target_type == 'Pinecone':
-        return PineconeTarget(config)
-    elif target_type == 'Qdrant':
+    # if target_type == 'Pinecone':
+    #     return PineconeTarget(config)
+    if target_type == 'Qdrant':
         return QdrantTarget(config)
     elif target_type == 'Weaviate':
         return WeaviateTarget(config)

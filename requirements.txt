@@ -42,3 +42,5 @@ pytest
 nltk
 pymilvus
 chromadb
+PyGithub
+onnxruntime

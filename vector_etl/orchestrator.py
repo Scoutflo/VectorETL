@@ -110,11 +110,14 @@ class ETLOrchestrator:
 
         new_rows = []
         for _, row in df.iterrows():
+            original_id = row['df_uuid']  
             chunks = split_text(row['__concat_final'], chunk_size, chunk_overlap)
             for chunk in chunks:
                 if chunk:
                     new_row = row.copy()
                     new_row['__concat_final'] = chunk
+                    new_row['original_id'] = original_id  
+                    new_row['df_uuid'] = str(uuid.uuid4()) 
                     new_rows.append(new_row)
 
         return pd.DataFrame(new_rows, columns=df.columns)

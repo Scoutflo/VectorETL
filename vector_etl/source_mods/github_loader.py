@@ -13,15 +13,17 @@ class GithubSource(FileBaseSource):
         super().__init__(config)
         self.client = None
         self.repo_url = config['repo_name']
-        self.pat = config['pat', None]
+        self.pat = config.get('pat', None)  
         self.repo = None
-        self.branch_name = config['branch_name','main']
-        self.file_ext = config['file_ext','.md']
+        self.branch_name = config.get('branch_name', 'main')  
+        self.file_ext = config.get('file_ext', '.md')
         
     
     def connect(self):
         logger.info("Connecting to Github client...")
-        self.client = Github(password=self.pat)
+        ACCESS_USERNAME = os.getenv('GITHUB_ACCESS_USERNAME')
+        ACCESS_PWD = os.getenv('GITHUB_ACCESS_PWD')
+        self.client = Github(ACCESS_USERNAME, ACCESS_PWD, per_page=100)
         self.repo = self.client.get_repo(self.repo_url)
         if self.repo != None: 
             logger.info("Connected to Github client.")
@@ -68,5 +70,28 @@ class GithubSource(FileBaseSource):
             for dir in dirs:
                 os.rmdir(os.path.join(root, dir))
         os.rmdir(path)
+        
+    def download_file(self, file_path):
 
+        downloaded_files = []
+
+        local_file_path = os.path.join("tempfile_downloads", file_path.split('/')[-1])
+        
+        if not self.client:
+            self.connect()
+            
+        content = self.repo.get_contents(file_path, ref=self.branch_name)
+        file_data = content.decoded_content
+        
+    
+        os.makedirs(os.path.dirname(local_file_path), exist_ok=True)
+        
+        
+        with open(local_file_path, "wb") as f:
+            f.write(file_data)
+        
+        downloaded_files.append(local_file_path)
+        logger.info(f"Downloaded {file_path} to {local_file_path}")
+
+        return downloaded_files
 

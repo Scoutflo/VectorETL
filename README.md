@@ -1,22 +1,14 @@
 <div align="center">
-        <a href="https://contextdata.ai"><img src="https://contextdata.nyc3.digitaloceanspaces.com/rs/images/ContextDataDark.png" width="350"></a>
+    <a href="https://contextdata.ai"><img src="docs/assets/icon.png" width="100" height="100" style="object-fit: cover;"></a>
 </div>
 
 <br/>
-
-<div align="center">
-
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" /></a>
-  <a href="https://pypi.org/project/vector-etl/"><img src="https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github" /></a>
-  [![Downloads](https://static.pepy.tech/badge/vector-etl/month)](https://pepy.tech/project/vector-etl)
-
-</div>
 
 <h2 align="center">
   <p>VectorETL: Lightweight ETL Framework for Vector Databases</p>
 </h2>
 
-VectorETL by [Context Data](https://contextdata.ai) is a modular framework designed to help **Data & AI engineers process data for their AI applications in just a few minutes!**
+VectorETL by [Scoutflo](https://www.scoutflo.com/) is a modular framework designed to help **Data & AI engineers process data for their AI applications in just a few minutes!**
 
 VectorETL streamlines the process of converting diverse data sources into vector embeddings and storing them in various vector databases. It supports multiple data sources (databases, cloud storage, and local files), various embedding models (including OpenAI, Cohere, and Google Gemini), and several vector database targets (like Pinecone, Qdrant, and Weaviate).
 
@@ -29,7 +21,7 @@ This pipeline aims to simplify the creation and management of vector search syst
 - Easy integration of new data sources, embedding models, and vector databases
 
 
-### [Documentation](https://vectoretl.contextdata.dev/index.html)
+### Documentation
 
 
 ![VectorETL End-to-End Flow](./docs/assets/vector-etl-flow.png "VectorETL End-to-End Flow")
@@ -44,8 +36,8 @@ This pipeline aims to simplify the creation and management of vector search syst
    - Embedding Configuration
    - Target Configuration
 5. [Contributing](#5-contributing)
-6. [Examples](https://github.com/ContextData/VectorETL/tree/main/examples)
-7. [Documentation](https://vectoretl.contextdata.dev/index.html)
+6. [Examples](https://github.com/Scoutflo/VectorETL)
+7. [Documentation](https://github.com/Scoutflo/VectorETL)
 
 
 ## 1. Installation
@@ -53,7 +45,7 @@ This pipeline aims to simplify the creation and management of vector search syst
 
 or
 
-`pip install git+https://github.com/ContextData/VectorETL.git`
+`pip install git+https://github.com/Scoutflo/VectorETL.git`
 
 
 ## 2. Usage
@@ -162,7 +154,42 @@ flow.execute()
 
 Here are some examples of how to use the ETL framework for different scenarios:
 
-#### 1. Processing Data from a PostgreSQL Database to Pinecone
+#### 1. Processing Data from a Github to Chroma
+
+```bash
+vector-etl -c config/github_to_chroma.yaml
+```
+
+Where `github_to_chroma.yaml` might look like:
+
+```yaml
+source:
+  source_data_type: "Github"
+  repo_name: "Github Repository name"
+  branch_name: "master"
+  file_ext: ".md"
+
+embedding:
+  embedding_model: "Azure OpenAI"
+  api_key: ${AZURE_OPENAI_API_KEY}
+  model_name: "text-embedding-3-large"
+  version : '2023-05-15'
+  endpoint : ${MODEL_ENDPOINT}
+  deployment_name : text-embedding-3-large
+  private_deployment: 'Yes'
+
+target:
+  target_database: "ChromaDB"
+  collection_name: "Collection name"
+  dimension: 1536
+  metric: "cosine"
+  host : ${CHROMADB_HOST}
+  port: ${CHROMADB_PORT}
+
+embed_columns: []
+```
+
+#### 2. Processing Data from a PostgreSQL Database to Pinecone
 
 ```bash
 vector-etl -c config/postgres_to_pinecone.yaml
@@ -202,7 +229,7 @@ embed_columns:
   - "purchase_history"
 ```
 
-#### 2. Processing CSV Files from S3 to Qdrant
+#### 3. Processing CSV Files from S3 to Qdrant
 
 ```bash
 vector-etl -c config/s3_to_qdrant.yaml
@@ -572,7 +599,7 @@ We welcome contributions to the ETL Framework for Vector Databases! Whether you'
 
 If you encounter a bug or have a suggestion for improving the ETL framework:
 
-1. Check the [GitHub Issues](https://github.com/ContextData/VectorETL/issues) to see if the issue or suggestion has already been reported.
+1. Check the [GitHub Issues](https://github.com/Scoutflo/VectorETL) to see if the issue or suggestion has already been reported.
 2. If not, open a new issue. Provide a clear title and description, and as much relevant information as possible, including:
    - Steps to reproduce (for bugs)
    - Expected behavior
@@ -653,6 +680,4 @@ If you're thinking about adding a new feature:
 - We use GitHub pull requests for this purpose.
 - Reviewers may request changes before a pull request can be merged.
 
-### Community (Discord)
 
-We encourage all users to join our [Discord server](https://discord.gg/8agCy6bM) to collaborate with the Context Data development team and other contributors in order to suggest upgrades, new integrations and issues.
