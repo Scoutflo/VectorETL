@@ -28,7 +28,6 @@ class AzureOpenAIEmbedding(BaseEmbedding):
                 encoding_format="float"
             )
         elif self.config['private_deployment'] == 'Yes':
-            print("here ashu")
             response = self.client.embeddings.create(
                 input=text_data,
                 model=self.config['model_name']

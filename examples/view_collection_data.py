@@ -1,6 +1,11 @@
-# we can use this script to view the data in a collection
+import os
 import chromadb
-client = chromadb.HttpClient(host="http://34.47.241.104:8000", port="8000", ssl=False)
+
+# we can use this script to view the data in a collection
+
+HOST = os.environ.get('CHROMA_HOST')
+PORT = os.environ.get('CHROMA_PORT')
+client = chromadb.HttpClient(host=HOST, port=PORT, ssl=False)
 client.heartbeat()
 
 collection_names = client.list_collections()

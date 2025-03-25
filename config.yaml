@@ -1,26 +1,25 @@
 source:
   source_data_type: "Github"
-  repo_name: ""
-  pat : ""
+  repo_name: "Repo name here"
   branch_name: "master"
   file_ext: ".md"
 
 embedding:
   embedding_model: "Azure OpenAI"
-  api_key: ""
+  api_key: "Add Azure openai key"
   model_name: "text-embedding-3-large"
   version : '2023-05-15'
   endpoint : https://sf-ai-test.openai.azure.com/
   deployment_name : text-embedding-3-large
   private_deployment: 'Yes'
-  azure_resource_name: sf-ai-test
 
 target:
   target_database: "ChromaDB"
-  collection_name: "scoutflo-test-v4"
+  collection_name: "Collection name"
   dimension: 1536
   metric: "cosine"
   host : http://34.47.241.104:8000
   port: 8000
 
 embed_columns: []
+

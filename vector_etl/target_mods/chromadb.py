@@ -76,7 +76,7 @@ class ChromaDBTarget(BaseTarget):
             
         # ChromaDB requires documents, but we're not using them for embedding storage
         documents = [""] * len(ids)
-        # print("log",ids)
+
         self.collection.add(
             ids=ids,
             embeddings=embeddings,

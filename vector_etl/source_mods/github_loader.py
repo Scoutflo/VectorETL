@@ -21,7 +21,8 @@ class GithubSource(FileBaseSource):
     
     def connect(self):
         logger.info("Connecting to Github client...")
-        print("ashupat",self.pat)
+        ACCESS_USERNAME = os.getenv('GITHUB_ACCESS_USERNAME')
+        ACCESS_PWD = os.getenv('GITHUB_ACCESS_PWD')
         self.client = Github(ACCESS_USERNAME, ACCESS_PWD, per_page=100)
         self.repo = self.client.get_repo(self.repo_url)
         if self.repo != None: 
