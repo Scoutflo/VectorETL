@@ -64,7 +64,7 @@ class ETLOrchestrator:
         df = self.generate_concatenation(df)
 
         # Split data into chunks if necessary
-        chunk_size = self.source_config.get('chunk_size', 1000)
+        chunk_size = self.source_config.get('chunk_size', 10000)
         chunk_overlap = self.source_config.get('chunk_overlap', 0)
         df = self.split_dataframe_column(df, chunk_size, chunk_overlap)
 

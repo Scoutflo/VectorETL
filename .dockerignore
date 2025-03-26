@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+uploads/
+tests/
+examples/
+docs/
+config/

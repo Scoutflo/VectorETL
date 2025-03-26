@@ -28,7 +28,6 @@ unstructured[all-docs]
 dropbox
 zenpy
 lancedb
-pyyaml
 google-auth
 google-auth-oauthlib
 google-auth-httplib2
@@ -44,3 +43,7 @@ pymilvus
 chromadb
 PyGithub
 onnxruntime
+fastapi
+uvicorn
+python-multipart
+pyyaml
