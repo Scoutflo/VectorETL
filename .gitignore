@@ -170,6 +170,7 @@ vector_etl/config/*
 .pypirc
 
 # Temporary test files
+vector_etl/tempfiles_downloads/
 vector_etl/tempfile_downloads/
 *_bkp.py
 vector_etl/source_mods/backup/

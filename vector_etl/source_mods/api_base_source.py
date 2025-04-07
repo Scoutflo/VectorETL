@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class ApiBaseSource(ABC):
     def __init__(self, config):
         self.config = config
-        self.output_dir = os.path.join(os.getcwd(), "vector_etl", "tempfiles_downloads")
+        self.output_dir = os.path.join(os.getcwd(), "vector_etl", "tempfile_downloads")
         os.makedirs(self.output_dir, exist_ok=True)
 
     @abstractmethod

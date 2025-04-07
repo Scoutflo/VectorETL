@@ -10,6 +10,7 @@ from .google_drive import GoogleDriveSource
 from .google_cloud_storage import GoogleCloudStorageSource
 from .github_loader import GithubSource
 from .local_file import LocalFileSource
+from .stackoverflow_loader import StackOverflowSource
 
 def get_source_class(config):
     source_type = config['source_data_type']
@@ -33,5 +34,7 @@ def get_source_class(config):
         return GoogleCloudStorageSource(config)
     elif source_type == 'Github':
         return GithubSource(config)
+    elif source_type == 'StackOverflow':
+        return StackOverflowSource(config)
     else:
         raise ValueError(f"Unsupported source type: {source_type}")

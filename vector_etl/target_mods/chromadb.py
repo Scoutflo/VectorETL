@@ -1,6 +1,7 @@
 import logging
 import pandas as pd
 import chromadb
+from chromadb.config import Settings
 from .base import BaseTarget
 
 logging.basicConfig(level=logging.INFO)
@@ -13,12 +14,25 @@ class ChromaDBTarget(BaseTarget):
         self.client = None
         self.collection = None
 
+   
     def connect(self):
+        logger = logging.getLogger(__name__)
         logger.info("Connecting to ChromaDB...")
-        logger.info(self.config['host'])
-        self.client = chromadb.HttpClient(host=self.config['host'], port=self.config['port'], ssl=False)
-        self.client.heartbeat()
+
+        if 'persist_directory' in self.config:
+            logger.info("Using PersistentClient (embedded ChromaDB)...")
+            self.client = chromadb.PersistentClient(path=self.config['persist_directory'])
+        else:
+            logger.info(f"Using HttpClient (ChromaDB server) at {self.config['host']}:{self.config['port']}...")
+            self.client = chromadb.HttpClient(
+                host=self.config['host'],
+                port=self.config['port'],
+                ssl=self.config.get('ssl', False)
+            )
+            self.client.heartbeat()
+
         logger.info("Connected to ChromaDB successfully.")
+
 
     def create_index_if_not_exists(self, dimension):
         if self.client is None:

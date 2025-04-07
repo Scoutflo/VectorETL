@@ -11,8 +11,9 @@ class StackOverflowSource(ApiBaseSource):
     def __init__(self, config):
         super().__init__(config)
         self.api_key = self.config.get("STACKOVERFLOW_API_KEY")
-        self.tag = self.config.get("tag", "devops")
+        self.tag = self.config.get("tag", "python")
         self.page_size = self.config.get("page_size", 10)
+
 
     def fetch_data(self):
         logger.info("Fetching latest StackOverflow questions...")
@@ -47,6 +48,17 @@ class StackOverflowSource(ApiBaseSource):
             time.sleep(0.2)
 
         df = pd.DataFrame(questions)
+
+        # Save to CSV if data exists
+        if not df.empty:
+            output_dir = os.path.join(os.path.dirname(__file__), "../tempfile_downloads")
+            os.makedirs(output_dir, exist_ok=True)
+            output_path = os.path.abspath(os.path.join(output_dir, "stackoverflow_data.csv"))
+            df.to_csv(output_path, index=False)
+            logger.info(f"StackOverflow data saved to {output_path}")
+        else:
+            logger.warning("No data fetched from StackOverflow. Skipping CSV save.")
+
         return df
 
     def _get_top_answer(self, question_id):
@@ -67,25 +79,31 @@ class StackOverflowSource(ApiBaseSource):
 
         answers = response.json().get("items", [])
         if answers:
-            return answers[0].get("body", "")[:300]  # First 300 chars of top answer
+            return answers[0].get("body", "")[:1000]  # First 1000 chars of top answer
         return ""
+
+
+
 
 
 if __name__ == "__main__":
     import os
+    import logging
 
     logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
 
     config = {
         "STACKOVERFLOW_API_KEY": os.getenv("STACKOVERFLOW_API_KEY"),
-        "tag": "devops",
+        "tag": "python",
         "page_size": 10
     }
 
     source = StackOverflowSource(config)
-    df = source.fetch_data()
+    df = source.fetch_data()  
+
     if not df.empty:
-        output_path = os.path.join(os.path.dirname(__file__), "../tempfile_downloads/stackoverflow_data.csv")
-        output_path = os.path.abspath(output_path)
-        source.save_to_csv(df, output_path)
+        source.save_to_csv(df, "stackoverflow_data.csv")
+    else:
+        logger.warning("DataFrame is empty. CSV not saved.")
 
