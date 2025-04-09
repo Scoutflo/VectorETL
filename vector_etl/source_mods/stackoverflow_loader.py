@@ -19,8 +19,9 @@ class StackOverflowSource(ApiBaseSource):
         return BeautifulSoup(raw_html, "html.parser").get_text()
      
    
+    
     def fetch_data(self):
-        logger.info("Fetching high-quality StackOverflow Q&A with accepted answers...")
+        logger.info("Fetching StackOverflow Q&A with top-voted answers...")
         questions_data = []
         base_url = "https://api.stackexchange.com/2.3/search/advanced"
         params = {
@@ -29,8 +30,7 @@ class StackOverflowSource(ApiBaseSource):
             "tagged": self.tag,
             "site": "stackoverflow",
             "pagesize": self.page_size,
-            "accepted": True,
-            "answers": 1
+            "answers": 1  # ensures only questions with answers
         }
         if self.api_key:
             params["key"] = self.api_key
@@ -46,29 +46,26 @@ class StackOverflowSource(ApiBaseSource):
             title = item["title"]
             link = item["link"]
             score = item["score"]
-            accepted_answer_id = item.get("accepted_answer_id")
 
             # Fetch question body
             q_url = f"https://api.stackexchange.com/2.3/questions/{question_id}"
             q_params = {"site": "stackoverflow", "filter": "withbody"}
             if self.api_key:
                 q_params["key"] = self.api_key
-
             q_res = requests.get(q_url, params=q_params)
             if q_res.status_code != 200:
                 logger.warning(f"Failed to fetch body for QID {question_id}")
                 continue
             question_body = html.unescape(q_res.json()["items"][0].get("body", ""))
 
-            # Fetch accepted answer body
-            a_url = f"https://api.stackexchange.com/2.3/answers/{accepted_answer_id}"
-            a_params = {"site": "stackoverflow", "filter": "withbody"}
+            # Fetch top-voted answer
+            a_url = f"https://api.stackexchange.com/2.3/questions/{question_id}/answers"
+            a_params = {"site": "stackoverflow", "sort": "votes", "order": "desc", "filter": "withbody"}
             if self.api_key:
                 a_params["key"] = self.api_key
-
             a_res = requests.get(a_url, params=a_params)
-            if a_res.status_code != 200:
-                logger.warning(f"Failed to fetch accepted answer for QID {question_id}")
+            if a_res.status_code != 200 or not a_res.json().get("items"):
+                logger.warning(f"No top-voted answer found for QID {question_id}")
                 continue
             answer_body = html.unescape(a_res.json()["items"][0].get("body", ""))
 
@@ -100,34 +97,40 @@ class StackOverflowSource(ApiBaseSource):
         else:
             logger.warning("No suitable questions found.")
 
-        return df        
-
-    def _get_top_answer(self, question_id):
-        answer_url = f"https://api.stackexchange.com/2.3/questions/{question_id}/answers"
-        params = {
-            "order": "desc",
-            "sort": "votes",
-            "site": "stackoverflow",
-            "filter": "withbody"
-        }
-        if self.api_key:
-            params["key"] = self.api_key
-
-        response = requests.get(answer_url, params=params)
-        if response.status_code != 200:
-            logger.warning(f"Failed to fetch answers for QID {question_id}: {response.status_code}")
-            return ""
-
-        answers = response.json().get("items", [])
-        if answers:
-            raw_body = answers[0].get("body", "")
-            cleaned_body = html.unescape(raw_body)
-            return cleaned_body[:1000]  # limit to 1000 chars
-        else:
-            logger.info(f"No answers found for question ID {question_id}")
-        return ""
+        return df
 
 
+
+    def categorize_and_save(self):
+        # Temporarily increase page size to ensure enough questions
+        original_page_size = self.page_size
+        self.page_size = max(self.page_size, 60)
+        df = self.fetch_data()
+        self.page_size = original_page_size
+
+        if df.empty:
+            logger.warning("No data fetched for categorization.")
+            return
+
+        # Add tag and budget categorization
+        df["tag"] = self.tag
+
+        def score_to_budget(score):
+            if score >= 50:
+                return "High"
+            elif score >= 20:
+                return "Medium"
+            else:
+                return "Low"
+
+        df["budget"] = df["score"].apply(score_to_budget)
+
+        # Save to categorized CSV
+        output_dir = os.path.join(os.path.dirname(__file__), "../tempfile_downloads")
+        os.makedirs(output_dir, exist_ok=True)
+        categorized_output_path = os.path.join(output_dir, "stackoverflow_categorized.csv")
+        df.to_csv(categorized_output_path, index=False)
+        logger.info(f"Categorized Q&A data saved to {categorized_output_path}")
 
 
 if __name__ == "__main__":
@@ -140,14 +143,9 @@ if __name__ == "__main__":
     config = {
         "STACKOVERFLOW_API_KEY": os.getenv("STACKOVERFLOW_API_KEY"),
         "tag": "python",
-        "page_size": 10
+        "page_size": 60
     }
 
     source = StackOverflowSource(config)
-    df = source.fetch_data()  
-
-    if not df.empty:
-        source.save_to_csv(df, "stackoverflow_data.csv")
-    else:
-        logger.warning("DataFrame is empty. CSV not saved.")
+    source.categorize_and_save()
 
