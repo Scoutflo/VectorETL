@@ -30,7 +30,7 @@ class StackOverflowSource(ApiBaseSource):
             "tagged": self.tag,
             "site": "stackoverflow",
             "pagesize": self.page_size,
-            "answers": 1  # ensures only questions with answers
+            "answers": 1  
         }
         if self.api_key:
             params["key"] = self.api_key
