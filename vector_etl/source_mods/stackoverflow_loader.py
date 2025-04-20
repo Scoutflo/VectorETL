@@ -14,6 +14,9 @@ class StackOverflowSource(ApiBaseSource):
         self.api_key = self.config.get("STACKOVERFLOW_API_KEY")
         self.tag = self.config.get("tag", "python")
         self.page_size = self.config.get("page_size", 10)
+        
+        if not self.api_key:
+            logger.warning("No StackOverflow API key provided. You may be subject to lower rate limits.")    
 
     def clean_html(self, raw_html): 
         return BeautifulSoup(raw_html, "html.parser").get_text()
@@ -104,7 +107,7 @@ class StackOverflowSource(ApiBaseSource):
     def categorize_and_save(self):
         # Temporarily increase page size to ensure enough questions
         original_page_size = self.page_size
-        self.page_size = max(self.page_size, 60)
+        self.page_size = max(self.page_size, 80)
         df = self.fetch_data()
         self.page_size = original_page_size
 
@@ -134,9 +137,7 @@ class StackOverflowSource(ApiBaseSource):
 
 
 if __name__ == "__main__":
-    import os
-    import logging
-
+    
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
 
