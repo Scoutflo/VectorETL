@@ -1,0 +1,27 @@
+source:
+  source_data_type: "StackOverflow"
+  STACKOVERFLOW_API_KEY: 'your_api_key'
+  tag: "python"
+  page_size: 10
+
+embedding:
+  embedding_model: "Azure OpenAI"
+  api_key: 'your_openai_api_key'
+  model_name: "text-embedding-3-large" 
+  version: '2024-02-15-preview'
+  endpoint: https://sf-ai-test.openai.azure.com/  
+  deployment_name: gpt-4o
+  private_deployment: "Yes"
+
+target:
+  target_database: "ChromaDB"
+  collection_name: "stackoverflow_qa"
+  dimension: 3072
+  metric: "cosine"
+  persist_directory: "./chroma_data"
+  # host:
+  # port:
+
+embed_columns:
+  - combined_text
+
